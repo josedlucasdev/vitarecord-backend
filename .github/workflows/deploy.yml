@@ -58,6 +58,8 @@ jobs:
             echo "SANCTUM_STATEFUL_DOMAINS=dev.app.vitarecord.com" >> .env
             echo "CORS_ALLOWED_ORIGINS=https://dev.app.vitarecord.com" >> .env
           fi
+          # Eliminar .env de .gitignore temporalmente para que el FTP-Deploy-Action lo pueda ver
+          sed -i '/^\.env$/d' .gitignore
 
       - name: 📂 Sync files (Production)
         if: github.ref == 'refs/heads/main'
