@@ -164,7 +164,7 @@ class PatientController extends Controller
         // Cargamos las evoluciones y acoplamos los módulos que tengan vinculados
         $evolutions = $patient->evolutions()
             ->with(['prescriptions', 'exams', 'doctor'])
-            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
             ->get();
             
         // Podríamos también retornar recursos "huerfanos" (recetas hechas fuera de una evolución) 
