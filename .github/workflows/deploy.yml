@@ -32,7 +32,10 @@ jobs:
         run: composer install --no-dev --optimize-autoloader
 
       - name: 📦 Install NPM dependencies
-        run: npm ci
+        run: npm install
+
+      - name: 🏗️ Build assets
+        run: npm run build
 
       - name: 🚀 Generar archivo .env
         run: |
