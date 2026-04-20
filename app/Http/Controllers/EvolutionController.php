@@ -33,8 +33,8 @@ class EvolutionController extends Controller
             'gynecological_exam_bimanual' => 'nullable|string',
             'diagnostic_impression' => 'nullable|string',
             'prescriptions' => 'nullable|string', // Se envía como string JSON cuando se usa FormData
-            'eco_attachments.*' => 'nullable|image|max:5120',
-            'manual_prescription_file' => 'nullable|image|max:5120',
+            'eco_attachments.*' => 'nullable|image|max:20480',
+            'manual_prescription_file' => 'nullable|image|max:20480',
         ]);
 
         return \DB::transaction(function () use ($validated, $patient, $request) {
