@@ -10,6 +10,8 @@ jobs:
   web-deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
@@ -21,30 +23,38 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, bcmath
           coverage: none
 
-      - name: 🔍 Probar conectividad y secretos (Diagnóstico)
-        run: |
-          echo "Longitud del servidor: ${#SERVER} caracteres"
-          echo "Longitud del usuario: ${#USER} caracteres"
-          if [ -z "$SERVER" ]; then echo "⚠️ ERROR: FTP_SERVER está vacío"; exit 1; fi
-          echo "Probando resolución DNS para: $SERVER"
-          nslookup $SERVER || echo "❌ ERROR: No se puede resolver el host $SERVER"
-        env:
-          SERVER: ${{ secrets.FTP_SERVER }}
-          USER: ${{ secrets.FTP_USERNAME }}
-
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: 📦 Install Composer dependencies
         run: composer install --no-dev --optimize-autoloader
 
       - name: 📦 Install NPM dependencies
-        run: npm install
+        run: npm ci
 
-      - name: 🏗️ Build assets
-        run: npm run build
+      - name: 🚀 Generar archivo .env
+        run: |
+          cp .env.example .env
+          sed -i "s|APP_KEY=|APP_KEY=${{ secrets.APP_KEY }}|g" .env
+          sed -i "s|DB_DATABASE=laravel|DB_DATABASE=${{ secrets.DB_DATABASE }}|g" .env
+          sed -i "s|# DB_USERNAME=root|DB_USERNAME=${{ secrets.DB_USERNAME }}|g" .env
+          sed -i "s|# DB_PASSWORD=|DB_PASSWORD=${{ secrets.DB_PASSWORD }}|g" .env
+          
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            sed -i "s|APP_ENV=local|APP_ENV=production|g" .env
+            sed -i "s|APP_DEBUG=true|APP_DEBUG=false|g" .env
+            sed -i "s|APP_URL=http://localhost|APP_URL=https://api.vitarecord.com|g" .env
+            echo "SANCTUM_STATEFUL_DOMAINS=app.vitarecord.com" >> .env
+            echo "CORS_ALLOWED_ORIGINS=https://app.vitarecord.com" >> .env
+          else
+            sed -i "s|APP_ENV=local|APP_ENV=development|g" .env
+            sed -i "s|APP_DEBUG=true|APP_DEBUG=true|g" .env
+            sed -i "s|APP_URL=http://localhost|APP_URL=https://dev.api.vitarecord.com|g" .env
+            echo "SANCTUM_STATEFUL_DOMAINS=dev.app.vitarecord.com" >> .env
+            echo "CORS_ALLOWED_ORIGINS=https://dev.app.vitarecord.com" >> .env
+          fi
 
       - name: 📂 Sync files (Production)
         if: github.ref == 'refs/heads/main'
@@ -60,7 +70,6 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/tests/**
-            **/.env
             **/storage/logs/*
             **/storage/framework/sessions/*
             **/storage/framework/views/*
@@ -80,7 +89,6 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/tests/**
-            **/.env
             **/storage/logs/*
             **/storage/framework/sessions/*
             **/storage/framework/views/*
