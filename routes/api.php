@@ -20,6 +20,16 @@ Route::post('admin/doctors', [DoctorController::class, 'store']);
 Route::put('admin/doctors/{id}', [DoctorController::class, 'update']);
 Route::patch('admin/doctors/{id}/toggle-status', [DoctorController::class, 'toggleStatus']);
 
+// Ruta temporal para crear el enlace simbólico en cPanel
+Route::get('/setup-storage', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        return response()->json(['message' => 'Enlace simbólico creado correctamente']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
