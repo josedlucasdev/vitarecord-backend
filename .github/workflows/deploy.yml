@@ -21,6 +21,17 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, bcmath
           coverage: none
 
+      - name: 🔍 Probar conectividad y secretos (Diagnóstico)
+        run: |
+          echo "Longitud del servidor: ${#SERVER} caracteres"
+          echo "Longitud del usuario: ${#USER} caracteres"
+          if [ -z "$SERVER" ]; then echo "⚠️ ERROR: FTP_SERVER está vacío"; exit 1; fi
+          echo "Probando resolución DNS para: $SERVER"
+          nslookup $SERVER || echo "❌ ERROR: No se puede resolver el host $SERVER"
+        env:
+          SERVER: ${{ secrets.FTP_SERVER }}
+          USER: ${{ secrets.FTP_USERNAME }}
+
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -30,7 +41,7 @@ jobs:
         run: composer install --no-dev --optimize-autoloader
 
       - name: 📦 Install NPM dependencies
-        run: npm ci
+        run: npm install
 
       - name: 🏗️ Build assets
         run: npm run build
