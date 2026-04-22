@@ -17,7 +17,9 @@ class PatientController extends Controller
         $user = $request->user();
         $query = $request->query('q');
         
-        $patientsQuery = Patient::query()->with('baseHistory');
+        $patientsQuery = Patient::query()
+            ->with('baseHistory')
+            ->withMax('evolutions', 'date');
 
         if ($user->role === 'doctor') {
             $patientsQuery->where(function($q) use ($user) {

@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('evolutions', function (Blueprint $table) {
-            $table->string('weight')->nullable()->after('current_illness');
-            $table->string('height')->nullable()->after('weight');
-            $table->string('fetal_heart_rate')->nullable()->after('height');
-            $table->string('uterine_height')->nullable()->after('fetal_heart_rate');
-            $table->text('physical_exam')->nullable()->after('vital_signs');
-        });
+        if (!Schema::hasColumn('evolutions', 'weight')) {
+            Schema::table('evolutions', function (Blueprint $table) {
+                $table->string('weight')->nullable()->after('current_illness');
+                $table->string('height')->nullable()->after('weight');
+                $table->string('fetal_heart_rate')->nullable()->after('height');
+                $table->string('uterine_height')->nullable()->after('fetal_heart_rate');
+                $table->text('physical_exam')->nullable()->after('vital_signs');
+            });
+        }
     }
  
     /**

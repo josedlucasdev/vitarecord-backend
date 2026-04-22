@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('prescriptions', function (Blueprint $table) {
-            $table->string('attachment_path')->nullable()->after('indications');
-        });
+        if (!Schema::hasColumn('prescriptions', 'attachment_path')) {
+            Schema::table('prescriptions', function (Blueprint $table) {
+                $table->string('attachment_path')->nullable()->after('indications');
+            });
+        }
     }
 
     /**
