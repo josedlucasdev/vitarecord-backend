@@ -10,6 +10,7 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\ProfileController;
 
 Route::post('login', [AuthController::class, 'login']);
 
@@ -39,4 +40,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Analíticas
     Route::get('dashboard/stats', [DashboardController::class, 'stats']);
+
+    // Gestión de Perfil
+    Route::post('profile', [ProfileController::class, 'update']);
+    Route::put('profile/password', [ProfileController::class, 'updatePassword']);
+    Route::get('profile/signature', [ProfileController::class, 'showSignature']);
+    Route::get('profile/stamp', [ProfileController::class, 'showStamp']);
 });

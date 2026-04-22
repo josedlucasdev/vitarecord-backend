@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'role', 'identity_card', 'phone', 'specialty', 'photo_path', 'is_active'])]
+#[Fillable(['name', 'email', 'password', 'role', 'identity_card', 'phone', 'specialty', 'photo_path', 'signature_path', 'stamp_path', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -39,5 +39,23 @@ class User extends Authenticatable
     {
         if (!$value) return null;
         return asset('doctors/' . $value);
+    }
+
+    /**
+     * Get the full URL for the signature path.
+     */
+    public function getSignaturePathAttribute($value)
+    {
+        if (!$value) return null;
+        return url('/api/profile/signature');
+    }
+
+    /**
+     * Get the full URL for the stamp path.
+     */
+    public function getStampPathAttribute($value)
+    {
+        if (!$value) return null;
+        return url('/api/profile/stamp');
     }
 }
