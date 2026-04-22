@@ -20,9 +20,9 @@ class ProfileController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
-            'photo' => 'nullable|image|max:10240',
-            'signature' => 'nullable|image|max:10240',
-            'stamp' => 'nullable|image|max:10240',
+            'photo' => 'nullable|image|max:262144',
+            'signature' => 'nullable|image|max:262144',
+            'stamp' => 'nullable|image|max:262144',
         ]);
 
         // Handle Profile Photo (Remains public)
